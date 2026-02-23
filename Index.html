@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nathan De Greef - Portfolio</title>
+<style>
+    /*========================
+      General Portfolio Styles
+    ========================*/
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        color: #2c2c2c;
+        overflow-x: hidden;
+        background: linear-gradient(135deg, #1a1a1a 0%, #ffffff 100%);
+        scroll-behavior: smooth;
+    }
+
+    /* Fixed Navigation Bar */
+    nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 70px;
+        background: rgba(26, 26, 26, 0.98);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 40px;
+        z-index: 1000;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+    }
+
+    .nav-brand {
+        color: white;
+        font-weight: 700;
+        font-size: 1.2rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 40px;
+    }
+
+    nav a {
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        padding: 6px 0;
+        border-bottom: 2px solid transparent;
+        font-size: 0.95rem;
+        letter-spacing: 0.5px;
+    }
+
+    nav a:hover {
+        border-bottom-color: white;
+        transform: translateY(-1px);
+    }
+
+    /* Hero/Globe Section */
+    .hero-section {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        overflow: hidden;
+        transition: all 0.1s ease-out;
+    }
+
+    .globe {
+        width: 100%;
+        height: 100%;
+        background: #1a1a1a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8rem;
+        cursor: pointer;
+        position: absolute;
+        overflow: hidden;
+        top: 0;
+        left: 0;
+        border-radius: 0;
+    }
+
+    #three-root .error-message {
+        color: #ff6b6b;
+        font-size: 0.9rem;
+        text-align: center;
+        padding: 20px;
+        max-width: 300px;
+    }
+
+    @keyframes globeRotate {
+        from {
+            transform: rotateY(0deg);
+        }
+        to {
+            transform: rotateY(360deg);
+        }
+    }
+
+    .globe:hover {
+        animation-play-state: paused;
+        filter: brightness(1.1);
+    }
+
+    .scroll-hint {
+        position: absolute;
+        bottom: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        opacity: 1;
+        animation: bounce 2.5s infinite;
+    }
+
+    @keyframes sweepUp {
+        from {
+            transform: translateY(0);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .portfolio-container.sweep-transition {
+        animation: sweepUp 0.8s ease-out forwards;
+    }
+
+    /* Portfolio Sections Container */
+    .portfolio-container {
+        position: relative;
+        z-index: 20;
+        margin-top: 100vh;
+    }
+
+    section {
+        padding: 80px 50px;
+        max-width: 900px;
+        margin: 0 auto 40px;
+        background: rgba(255, 255, 255, 0.82);
+        border-radius: 16px;
+        box-shadow: 0 15px 60px rgba(0, 0, 0, 0.12);
+        position: relative;
+        opacity: 0;
+        transform: scale(0.95);
+        transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        will-change: transform, opacity;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    section h2 {
+        font-size: 2.8rem;
+        margin-bottom: 50px;
+        color: #1a1a1a;
+        position: relative;
+        padding-bottom: 20px;
+        font-weight: 700;
+        letter-spacing: -1px;
+    }
+
+    section h2::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #000 0%, #999 100%);
+        border-radius: 2px;
+    }
+
+    section.visible {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    section.fade-out {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    .projects {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+    }
+
+    .project-card {
+        background: linear-gradient(135deg, #f9f9f9 0%, #efefef 100%);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        border-left: 3px solid #2c2c2c;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .project-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+    }
+
+    .project-card h3 {
+        margin-top: 0;
+        color: #1a1a1a;
+        font-size: 1.3rem;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+    }
+
+    .project-card p {
+        color: #555;
+        line-height: 1.7;
+        margin-bottom: 20px;
+    }
+
+    .project-card .cta-button {
+        background: #2c2c2c;
+        border-color: #2c2c2c;
+        font-size: 0.9rem;
+        padding: 10px 20px;
+    }
+
+    .project-card:hover .cta-button {
+        background: #1a1a1a;
+        border-color: #1a1a1a;
+    }
+
+    footer {
+        text-align: center;
+        padding: 80px 20px;
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        color: white;
+        margin-top: 20px;
+        position: relative;
+        z-index: 2;
+        opacity: 1;
+        transition: opacity 0.3s ease-out;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 0.95rem;
+        letter-spacing: 0.5px;
+    }
+
+    footer p {
+        margin: 8px 0;
+        opacity: 0.8;
+    }
+
+    /* Art Gallery Styles */
+    .art-divider {
+        height: 1px;
+        background: linear-gradient(to right, transparent 0%, #000000 30%, #000000 70%, transparent 100%);
+        margin: 40px 0 45px 0;
+        opacity: 0.3;
+    }
+
+    .art-showcase {
+        display: flex;
+        align-items: center;
+        gap: 50px;
+        margin-bottom: 30px;
+        padding: 0;
+        background: transparent;
+        border-radius: 0;
+        border: none;
+        transition: all 0.4s ease;
+    }
+
+    .art-showcase:hover {
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .art-showcase.reverse {
+        flex-direction: row-reverse;
+    }
+
+    .art-image {
+        flex: 1;
+        min-width: 300px;
+        aspect-ratio: 1;
+        background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 5.5rem;
+        color: rgba(0, 0, 0, 0.15);
+        font-weight: bold;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .art-showcase:hover .art-image {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.2);
+        background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+    }
+
+    .art-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .art-content {
+        flex: 1;
+        padding: 20px;
+    }
+
+    .art-content h3 {
+        font-size: 2.2rem;
+        color: #1a1a1a;
+        margin-bottom: 20px;
+        margin-top: 0;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .art-content p {
+        line-height: 1.8;
+        color: #555;
+        margin-bottom: 15px;
+        font-size: 1.05rem;
+    }
+
+    /* CTA Button Styles */
+    .cta-button {
+        display: inline-block;
+        padding: 14px 32px;
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        border: 2px solid #1a1a1a;
+        margin-top: 20px;
+        cursor: pointer;
+    }
+
+    .cta-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+    }
+
+    /* Social Links */
+    .social-links {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+    .social-links a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 45px;
+        height: 45px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        color: #2c2c2c;
+        border: none;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        font-size: 1.2rem;
+        text-decoration: none;
+    }
+
+    .social-links a:hover {
+        background: #1a1a1a;
+        color: white;
+        transform: scale(1.1);
+    }
+
+    /* Contact Form Styles */
+    .contact-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 50px;
+        align-items: start;
+        margin-top: 40px;
+    }
+
+    .contact-info {
+        padding: 30px;
+        background: rgba(0, 0, 0, 0.02);
+        border-radius: 12px;
+        border-left: 4px solid #1a1a1a;
+    }
+
+    .contact-info h3 {
+        font-size: 1.4rem;
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: #1a1a1a;
+    }
+
+    .contact-info p {
+        margin: 15px 0;
+        color: #555;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #1a1a1a;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        padding: 12px 16px;
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #1a1a1a;
+        box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.1);
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    section p {
+        color: #555;
+        line-height: 1.8;
+        font-size: 1.05rem;
+    }
+
+    section a {
+        color: #2c2c2c;
+        text-decoration: none;
+        font-weight: 600;
+        border-bottom: 2px solid #2c2c2c;
+        transition: all 0.3s ease;
+    }
+
+    section a:hover {
+        opacity: 0.7;
+    }
+
+    strong {
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+    .email-link {
+        color: #1a1a1a;
+    }
+
+    .social-header {
+        margin-top: 30px;
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f0f0f0;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #2c2c2c;
+        border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #1a1a1a;
+    }
+
+    @media (max-width: 768px) {
+        nav {
+            padding: 0 20px;
+            height: 60px;
+        }
+
+        .nav-brand {
+            font-size: 1rem;
+        }
+
+        .nav-links {
+            gap: 20px;
+        }
+
+        nav a {
+            font-size: 0.85rem;
+        }
+
+        .globe-container {
+            width: 200px;
+            height: 200px;
+        }
+
+        .globe {
+            font-size: 6rem;
+        }
+
+        .scroll-hint {
+            bottom: 40px;
+        }
+
+        section {
+            padding: 50px 25px;
+        }
+
+        section h2 {
+            font-size: 2rem;
+        }
+
+        .art-showcase {
+            flex-direction: column !important;
+            gap: 30px;
+        }
+
+        .art-image {
+            min-width: 100%;
+            max-width: 400px;
+        }
+
+        .art-content {
+            text-align: center;
+        }
+
+        .contact-content {
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        .social-links {
+            gap: 15px;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+        }
+    }
+</style>
+</head>
+<body>
+
+<!-- Fixed Navigation Bar -->
+<nav>
+    <div class="nav-brand">Nathan De Greef</div>
+    <div class="nav-links">
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#artwork">Artwork</a>
+        <a href="#contact">Contact</a>
+    </div>
+</nav>
+
+<!-- Hero Section with Vault Globe (hidden until vault opens) -->
+<div class="hero-section hidden">
+    <div id="three-root" class="globe" aria-hidden="true"></div>
+    <div class="scroll-hint">Scroll to Explore</div>
+</div>
+
+<style>
+/* Reveal helper: keep hero invisible until overlay signals ready */
+.hero-section.hidden { opacity: 0; pointer-events: none; transition: opacity 600ms ease; }
+.hero-section.revealed { opacity: 1; pointer-events: auto; transition: opacity 600ms ease; }
+</style>
+
+<!-- Portfolio Content -->
+<div class="portfolio-container">
+    <section id="about">
+        <h2>About Me</h2>
+        <p>Write a short introduction about yourself here. What do you do? What are your skills? What are you passionate about?</p>
+        <a href="#contact" class="cta-button">Get In Touch</a>
+    </section>
+
+    <section id="projects">
+        <h2>Projects</h2>
+        <div class="projects">
+            <div class="project-card">
+                <h3>Project Title 1</h3>
+                <p>Description of your project goes here.</p>
+                <a href="#" class="cta-button">View Project →</a>
+            </div>
+            <div class="project-card">
+                <h3>Project Title 2</h3>
+                <p>Description of your project goes here.</p>
+                <a href="#" class="cta-button">View Project →</a>
+            </div>
+            <div class="project-card">
+                <h3>Project Title 3</h3>
+                <p>Description of your project goes here.</p>
+                <a href="#" class="cta-button">View Project →</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="artwork">
+        <h2>My Artwork</h2>
+        
+        <div class="art-showcase">
+            <div class="art-image">🎨</div>
+            <div class="art-content">
+                <h3>Artwork Title 1</h3>
+                <p>Describe your first piece here. Share the inspiration, techniques used, and what makes this artwork special. Connect with your audience through the story behind your creation.</p>
+            </div>
+        </div>
+
+        <div class="art-divider"></div>
+
+        <div class="art-showcase reverse">
+            <div class="art-image">🖼️</div>
+            <div class="art-content">
+                <h3>Artwork Title 2</h3>
+                <p>Tell the story of your second piece. What was your vision? What medium did you use? Engage viewers by explaining the creative process and the emotions you wanted to convey.</p>
+            </div>
+        </div>
+
+        <div class="art-divider"></div>
+
+        <div class="art-showcase">
+            <div class="art-image">✨</div>
+            <div class="art-content">
+                <h3>Artwork Title 3</h3>
+                <p>Share details about your third creation. Whether it's digital art, painting, sculpture, or mixed media, explain how this piece contributes to your artistic journey.</p>
+            </div>
+        </div>
+
+        <div class="art-divider"></div>
+
+        <div class="art-showcase reverse">
+            <div class="art-image">🌟</div>
+            <div class="art-content">
+                <h3>Artwork Title 4</h3>
+                <p>Conclude with your most recent or favorite piece. Describe the techniques, time invested, and the reception it received. Let your passion for art shine through.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2>Get In Touch</h2>
+        <div class="contact-content">
+            <div class="contact-info">
+                <h3>Let's Connect</h3>
+                <p><strong>Email:</strong></p>
+                <p><a href="mailto:youremail@example.com" class="email-link">youremail@example.com</a></p>
+                <p class="social-header"><strong>Follow My Work:</strong></p>
+                <div class="social-links">
+                    <a href="#" title="LinkedIn">in</a>
+                    <a href="#" title="GitHub">gh</a>
+                    <a href="#" title="Instagram">📸</a>
+                    <a href="#" title="Twitter">𝕏</a>
+                </div>
+            </div>
+            <div>
+                <form class="contact-form" onsubmit="event.preventDefault(); alert('Thank you for reaching out!');">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" required></textarea>
+                    </div>
+                    <button type="submit" class="cta-button">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        © 2025 Nathan De Greef — All rights reserved.
+    </footer>
+</div>
+
+<script src="Animation.js"></script>
+
+<script type="module" src="hero-globe.js"></script>
+<script>
+// Reveal hero when vault overlay finishes
+document.addEventListener('vault:opened', () => {
+    const hero = document.querySelector('.hero-section');
+    if (!hero) return;
+    hero.classList.remove('hidden');
+    hero.classList.add('revealed');
+    console.log('vault:opened received — revealing hero-section');
+});
+
+// Also reveal immediately if no overlay runs within a short timeout
+setTimeout(() => {
+    const hero = document.querySelector('.hero-section');
+    if (hero && hero.classList.contains('hidden')) {
+        hero.classList.remove('hidden');
+        hero.classList.add('revealed');
+        console.log('No overlay detected — revealing hero by timeout');
+    }
+}, 1500);
+
+    // Scroll-triggered pop animations and parallax effects
+    let hasScrolled = false;
+    function handleScroll() {
+        const sections = document.querySelectorAll('section');
+        const footer = document.querySelector('footer');
+        const heroSection = document.querySelector('.hero-section');
+        const portfolioContainer = document.querySelector('.portfolio-container');
+        
+        // Trigger fade animation on first scroll
+        if (window.scrollY > 0 && !hasScrolled) {
+            hasScrolled = true;
+            portfolioContainer.classList.add('sweep-transition');
+        }
+        
+        // Smooth fade hero based on scroll
+        const scrollProgress = window.scrollY / window.innerHeight;
+        heroSection.style.opacity = Math.max(0, 1 - scrollProgress * 1.5);
+        
+        // Section pop-in/pop-out animations
+        sections.forEach((section) => {
+            const rect = section.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            
+            // Trigger point: section visible when it's 30% from bottom of viewport
+            const triggerPoint = windowHeight * 0.3;
+            
+            if (rect.bottom > triggerPoint && rect.top < windowHeight - triggerPoint) {
+                // Section is in viewport - show it
+                section.classList.add('visible');
+                section.classList.remove('fade-out');
+            } else {
+                // Section is out of viewport - hide it
+                section.classList.remove('visible');
+                section.classList.add('fade-out');
+            }
+        });
+        
+        // Footer parallax and fade
+        const footerRect = footer.getBoundingClientRect();
+        if (footerRect.top < window.innerHeight) {
+            const footerOffset = (window.scrollY - footerRect.top) * 0.3;
+            footer.style.transform = `translateY(${footerOffset}px)`;
+        }
+    }
+    
+    // Optimize scroll performance with requestAnimationFrame
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                handleScroll();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
+    
+    // Initial call
+    handleScroll();
+</script>
+</body>
+</html>
