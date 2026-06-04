@@ -300,6 +300,48 @@
         box-shadow: none;
     }
 
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+        margin-top: 30px;
+    }
+
+    .art-card {
+        background: #fff;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .art-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 28px 80px rgba(0, 0, 0, 0.14);
+    }
+
+    .art-card img {
+        width: 100%;
+        height: 260px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .art-card-content {
+        padding: 24px;
+    }
+
+    .art-card h3 {
+        font-size: 1.6rem;
+        margin-bottom: 12px;
+    }
+
+    .art-card p {
+        margin: 0;
+        color: #555;
+        line-height: 1.7;
+    }
+
     .art-showcase.reverse {
         flex-direction: row-reverse;
     }
@@ -641,44 +683,66 @@
         </div>
     </section>
 
-    <section id="artwork">
-        <h2>My Artwork</h2>
-        
-        <div class="art-showcase">
-            <div class="art-image">🎨</div>
-            <div class="art-content">
-                <h3>Artwork Title 1</h3>
-                <p>Describe your first piece here. Share the inspiration, techniques used, and what makes this artwork special. Connect with your audience through the story behind your creation.</p>
+    <section id="artwork 1">
+        <h2>Project 1</h2>
+        <p>Model drawing w/ graphite and charcoal.</p>
+        <div class="gallery-grid">
+            <div class="art-card">
+                <img src="Pictures/IMG20251002200817.jpg" alt="Artwork 1">
+                <div class="art-card-content">
+                </div>
+            </div>
+            <div class="art-card">
+                <img src="Pictures/IMG20251002212554.jpg" alt="Artwork 2">
+                <div class="art-card-content">
+                </div>
+            </div>
+            <div class="art-card">
+                <img src="Pictures/IMG20251002200817.jpg" alt="Artwork 3">
+                <div class="art-card-content">
+                </div>
+            </div>
+            <div class="art-card">
+                <img src="Pictures/IMG20260528200341_01.jpg" alt="Artwork 4">
+                <div class="art-card-content">
+                </div>
             </div>
         </div>
+    </section>
 
-        <div class="art-divider"></div>
-
-        <div class="art-showcase reverse">
-            <div class="art-image">🖼️</div>
-            <div class="art-content">
-                <h3>Artwork Title 2</h3>
-                <p>Tell the story of your second piece. What was your vision? What medium did you use? Engage viewers by explaining the creative process and the emotions you wanted to convey.</p>
+        <section id="artwork 2">
+        <h2>Project 2</h2>
+        <p>Giving & taking, referenced from oragnic artworks. Using clay.</p>
+        <div class="gallery-grid">
+            <div class="art-card">
+                <img src="Pictures/IMG20251009210440.jpg" alt="Artwork 1.2">
+                <div class="art-card-content">
+                </div>
             </div>
-        </div>
-
-        <div class="art-divider"></div>
-
-        <div class="art-showcase">
-            <div class="art-image">✨</div>
-            <div class="art-content">
-                <h3>Artwork Title 3</h3>
-                <p>Share details about your third creation. Whether it's digital art, painting, sculpture, or mixed media, explain how this piece contributes to your artistic journey.</p>
+            <div class="art-card">
+                <img src="Pictures/IMG20251022182319.jpg" alt="Artwork 2.2">
+                <div class="art-card-content">
+                </div>
             </div>
-        </div>
-
-        <div class="art-divider"></div>
-
-        <div class="art-showcase reverse">
-            <div class="art-image">🌟</div>
-            <div class="art-content">
-                <h3>Artwork Title 4</h3>
-                <p>Conclude with your most recent or favorite piece. Describe the techniques, time invested, and the reception it received. Let your passion for art shine through.</p>
+            <div class="art-card">
+                <img src="Pictures/IMG20260115212425.jpg" alt="Artwork 3.2">
+                <div class="art-card-content">
+                </div>
+            </div>
+            <div class="art-card">
+                <img src="Pictures/IMG20260305183809.jpg" alt="Artwork 4.2">
+                <div class="art-card-content">
+                </div>
+            </div>
+            <div class="art-card">
+                <img src="Pictures/IMG20260305183814.jpg" alt="Artwork 5.2">
+                <div class="art-card-content">
+                </div>
+            </div>
+            <div class="art-card">
+                <img src="Pictures/IMG20260305183839.jpg" alt="Artwork 6.2">
+                <div class="art-card-content">
+                </div>
             </div>
         </div>
     </section>
