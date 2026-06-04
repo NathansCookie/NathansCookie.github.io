@@ -1,5 +1,5 @@
 {
-    "rotation": 15,
-    "slideDistance": 100,
-    "duration": 1200
+  "windup": 500,
+  "open": 1200,
+  "autoOpenDelay": 2400
 }

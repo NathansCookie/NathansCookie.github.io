@@ -4,7 +4,7 @@
   'use strict';
 
   // Config
-  const DEFAULTS = { windup: 500, open: 1000 };
+  const DEFAULTS = { windup: 500, open: 1000, autoOpenDelay: 2400 };
   let config = DEFAULTS;
   try {
     const resp = await fetch('Animation.json');
@@ -12,14 +12,24 @@
       const json = await resp.json();
       config = { 
         windup: Number(json.windup || DEFAULTS.windup),
-        open: Number(json.open || json.duration || DEFAULTS.open)
+        open: Number(json.open || json.duration || DEFAULTS.open),
+        autoOpenDelay: Number(json.autoOpenDelay ?? json.duration ?? DEFAULTS.autoOpenDelay)
       };
     }
   } catch (e) {}
 
   const WINDUP_MS = config.windup;
   const OPEN_MS = config.open;
+  const AUTO_OPEN_MS = Math.max(config.autoOpenDelay, WINDUP_MS + OPEN_MS + 300);
   const PREFERS_REDUCED = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+  let autoOpenTimer = null;
+  const clearAutoOpenTimer = () => {
+    if (autoOpenTimer !== null) {
+      window.clearTimeout(autoOpenTimer);
+      autoOpenTimer = null;
+    }
+  };
 
   // Save page state
   const prevOverflow = document.documentElement.style.overflow;
@@ -227,6 +237,7 @@
 
   async function startAnimation() {
     if (isRunning) return;
+    clearAutoOpenTimer();
     isRunning = true;
     dial.disabled = true;
 
@@ -264,6 +275,7 @@
   }
 
   function cleanup() {
+    clearAutoOpenTimer();
     try {
       if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
     } catch (e) {}
@@ -281,5 +293,12 @@
       startAnimation();
     }
   });
+
+  autoOpenTimer = window.setTimeout(() => {
+    if (!isRunning) {
+      console.log('Auto-opening vault overlay after delay');
+      startAnimation();
+    }
+  }, AUTO_OPEN_MS);
 
 })();
