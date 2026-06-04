@@ -158,6 +158,68 @@
         position: relative;
         z-index: 20;
         margin-top: 100vh;
+        overflow: hidden;
+    }
+
+    .edge-triangles {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: clamp(320px, 22vw, 400px);
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+    }
+
+    .edge-triangles::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.06) 28%, rgba(255, 255, 255, 0.02) 45%, transparent 80%);
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .edge-triangles.right::before {
+        background: linear-gradient(to left, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.06) 28%, rgba(255, 255, 255, 0.02) 45%, transparent 80%);
+    }
+
+    .edge-triangles.left {
+        left: -34px;
+    }
+
+    .edge-triangles.right {
+        right: -34px;
+    }
+
+    .portfolio-container section {
+        position: relative;
+        z-index: 1;
+    }
+
+    .triangle {
+        position: absolute;
+        width: var(--triangle-size, 48px);
+        height: var(--triangle-size, 48px);
+        clip-path: polygon(0 0, 100% 50%, 0 100%);
+        transform: rotate(var(--triangle-rotation, 0deg));
+        background: rgba(255, 255, 255, 0.28);
+        opacity: var(--triangle-opacity, 0.28);
+        pointer-events: none;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .triangle.dark {
+        background: rgba(0, 0, 0, 0.30);
+    }
+
+    .triangle.light {
+        background: rgba(255, 255, 255, 0.30);
+    }
+
+    .triangle.soft {
+        opacity: 0.12;
+        filter: blur(0.3px);
     }
 
     section {
@@ -307,6 +369,35 @@
         margin-top: 30px;
     }
 
+    .year-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 20px;
+    }
+
+    .year-button {
+        padding: 12px 24px;
+        border-radius: 999px;
+        border: 2px solid rgba(28, 28, 28, 0.16);
+        background: rgba(255, 255, 255, 0.95);
+        color: #1a1a1a;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .year-button.active {
+        background: #1a1a1a;
+        color: #ffffff;
+        border-color: #1a1a1a;
+    }
+
+    .year-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
     .art-card {
         background: #fff;
         border-radius: 18px;
@@ -340,6 +431,103 @@
         margin: 0;
         color: #555;
         line-height: 1.7;
+    }
+
+    .lightbox-overlay {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.88);
+        z-index: 2000;
+        padding: 24px;
+    }
+
+    .lightbox-overlay.active {
+        display: flex;
+    }
+
+    .lightbox-image {
+        max-width: 100%;
+        max-height: calc(100vh - 160px);
+        border-radius: 20px;
+        box-shadow: 0 30px 100px rgba(0, 0, 0, 0.45);
+        object-fit: contain;
+        width: auto;
+        height: auto;
+        cursor: zoom-out;
+    }
+
+    .lightbox-caption {
+        margin-top: 18px;
+        color: #f2f2f2;
+        text-align: center;
+        font-size: 1rem;
+        max-width: 900px;
+    }
+
+    .lightbox-close,
+    .lightbox-nav {
+        position: absolute;
+        width: 48px;
+        height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: none;
+        background: rgba(255, 255, 255, 0.12);
+        color: white;
+        font-size: 1.6rem;
+        cursor: pointer;
+        transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .lightbox-close:hover,
+    .lightbox-nav:hover {
+        transform: scale(1.05);
+        background: rgba(255, 255, 255, 0.18);
+    }
+
+    .lightbox-close {
+        top: 24px;
+        right: 24px;
+    }
+
+    .lightbox-prev,
+    .lightbox-next {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .lightbox-prev {
+        left: 24px;
+    }
+
+    .lightbox-next {
+        right: 24px;
+    }
+
+    @media (max-width: 768px) {
+        .gallery-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .lightbox-prev,
+        .lightbox-next {
+            width: 40px;
+            height: 40px;
+            font-size: 1.4rem;
+        }
+
+        .lightbox-close {
+            width: 40px;
+            height: 40px;
+            font-size: 1.4rem;
+            top: 16px;
+            right: 16px;
+        }
     }
 
     .art-showcase.reverse {
@@ -634,7 +822,7 @@
     <div class="nav-brand">Nathan De Greef</div>
     <div class="nav-links">
         <a href="#about">About</a>
-        <a href="#projects">Projects</a>
+        <a href="#projects">Years</a>
         <a href="#artwork">Artwork</a>
         <a href="#contact">Contact</a>
     </div>
@@ -654,36 +842,26 @@
 
 <!-- Portfolio Content -->
 <div class="portfolio-container">
+    <div class="edge-triangles left" aria-hidden="true"></div>
+    <div class="edge-triangles right" aria-hidden="true"></div>
     <section id="about">
         <h2>Art Portfolio | Nathan De Greef | 2026</h2>
         <p>Hello and welcome to my little art corner! As written all over, I'm Nathan! Below you'll find a collection of my artistic projects developed this year alongside the aid of various mediums and techniques. 
             The development of these projects have been possible thanks to the aid of KNST Hasselt (artistic lab (Visual and audiovisual arts))
         </p>
-        <a href="https://knst.hasselt.be/nl/volwassenen-vanaf-18-jaar" target="_blank" rel="noreferrer noopener" class="cta-button">Check it the course</a>
+        <a href="https://knst.hasselt.be/nl/volwassenen-vanaf-18-jaar" target="_blank" rel="noreferrer noopener" class="cta-button">Check out the course</a>
     </section>
 
     <section id="projects">
-        <h2>Projects</h2>
-        <div class="projects">
-            <div class="project-card">
-                <h3>Project Title 1</h3>
-                <p>Description of your project goes here.</p>
-                <a href="#" class="cta-button">View Project →</a>
-            </div>
-            <div class="project-card">
-                <h3>Project Title 2</h3>
-                <p>Description of your project goes here.</p>
-                <a href="#" class="cta-button">View Project →</a>
-            </div>
-            <div class="project-card">
-                <h3>Project Title 3</h3>
-                <p>Description of your project goes here.</p>
-                <a href="#" class="cta-button">View Project →</a>
-            </div>
+        <h2>Years</h2>
+        <p>Select a course year to view the artwork created during that period.</p>
+        <div class="year-filters">
+            <button type="button" class="year-button active" data-year="2025-2026">2025-2026</button>
+            <button type="button" class="year-button" data-year="2026-2027" disabled>2026-2027</button>
         </div>
     </section>
 
-    <section id="artwork 1">
+    <section id="artwork">
         <h2>Project 1</h2>
         <p>Model drawing w/ graphite and charcoal.</p>
         <div class="gallery-grid">
@@ -710,7 +888,7 @@
         </div>
     </section>
 
-        <section id="artwork 2">
+        <section id="artwork-2">
         <h2>Project 2</h2>
         <p>Giving & taking, referenced from oragnic artworks. Using clay.</p>
         <div class="gallery-grid">
@@ -747,7 +925,7 @@
         </div>
     </section>
 
-        <section id="artwork 3">
+        <section id="artwork-3">
         <h2>Project 3</h2>
         <p>Silent life w/ graphite and charcoal alongside ink. Referenced through using objects from my room.</p>
         <div class="gallery-grid">
@@ -788,7 +966,7 @@
             </div>
     </section>
 
-            <section id="artwork 4">
+            <section id="artwork-4">
         <h2>Project 4</h2>
         <p>Statement piece | Utilizing used fabric & items. 
             The cycle of the rise and fall of human civilization.
@@ -831,7 +1009,7 @@
             </div>
     </section>
 
-            <section id="artwork 5">
+            <section id="artwork-5">
         <h2>Project 5</h2>
         <p> Acrylic painting. Trough a tought experiment, beginning from a memory, to the concept of Distruptuion and Interuption. 
         </p>
@@ -874,7 +1052,7 @@
             <div class="contact-info">
                 <h3>Let's Connect</h3>
                 <p><strong>Email:</strong></p>
-                <p><a href="mailto:youremail@example.com" class="email-link">youremail@example.com</a></p>
+                <p><a href="mailto:Degreefnathan@gmail.com" class="email-link">Degreefnathan@gmail.com</a></p>
                 <p class="social-header"><strong>Follow My Work:</strong></p>
                 <div class="social-links">
                     <a href="#" title="LinkedIn">in</a>
@@ -906,6 +1084,14 @@
     <footer>
         © 2025 Nathan De Greef — All rights reserved.
     </footer>
+</div>
+
+<div class="lightbox-overlay" aria-hidden="true">
+    <button class="lightbox-close" aria-label="Close lightbox">×</button>
+    <button class="lightbox-nav lightbox-prev" aria-label="Previous image">‹</button>
+    <img class="lightbox-image" src="" alt="" />
+    <button class="lightbox-nav lightbox-next" aria-label="Next image">›</button>
+    <div class="lightbox-caption"></div>
 </div>
 
 <script src="Animation.js"></script>
@@ -990,6 +1176,181 @@ setTimeout(() => {
     
     // Initial call
     handleScroll();
+
+    // Lightbox gallery
+    (function () {
+        const cards = Array.from(document.querySelectorAll('.art-card'));
+        const overlay = document.querySelector('.lightbox-overlay');
+        const lightboxImage = document.querySelector('.lightbox-image');
+        const caption = document.querySelector('.lightbox-caption');
+        const closeButton = document.querySelector('.lightbox-close');
+        const prevButton = document.querySelector('.lightbox-prev');
+        const nextButton = document.querySelector('.lightbox-next');
+        let activeIndex = 0;
+
+        function showLightbox(index) {
+            const card = cards[index];
+            if (!card) return;
+            const img = card.querySelector('img');
+            const title = card.querySelector('h3')?.textContent || img.alt || '';
+            const description = card.querySelector('p')?.textContent || '';
+            lightboxImage.src = img.src;
+            lightboxImage.alt = img.alt || title;
+            caption.textContent = description ? `${title} — ${description}` : title;
+            overlay.classList.add('active');
+            overlay.setAttribute('aria-hidden', 'false');
+            activeIndex = index;
+        }
+
+        function closeLightbox() {
+            overlay.classList.remove('active');
+            overlay.setAttribute('aria-hidden', 'true');
+            lightboxImage.src = '';
+        }
+
+        function showNext() {
+            showLightbox((activeIndex + 1) % cards.length);
+        }
+
+        function showPrev() {
+            showLightbox((activeIndex - 1 + cards.length) % cards.length);
+        }
+
+        cards.forEach((card, index) => {
+            const img = card.querySelector('img');
+            if (!img) return;
+            img.style.cursor = 'zoom-in';
+            img.addEventListener('click', (event) => {
+                event.preventDefault();
+                showLightbox(index);
+            });
+        });
+
+        closeButton.addEventListener('click', closeLightbox);
+        prevButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            showPrev();
+        });
+        nextButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            showNext();
+        });
+
+        overlay.addEventListener('click', (event) => {
+            if (event.target === overlay || event.target === lightboxImage) {
+                closeLightbox();
+            }
+        });
+
+        window.addEventListener('keydown', (event) => {
+            if (!overlay.classList.contains('active')) return;
+            if (event.key === 'Escape') {
+                closeLightbox();
+            } else if (event.key === 'ArrowRight') {
+                showNext();
+            } else if (event.key === 'ArrowLeft') {
+                showPrev();
+            }
+        });
+
+        const yearButtons = Array.from(document.querySelectorAll('.year-button'));
+        const artworkSections = Array.from(document.querySelectorAll('section[id^="artwork"]'));
+
+        function setActiveYearButton(selectedYear) {
+            yearButtons.forEach(button => {
+                button.classList.toggle('active', button.dataset.year === selectedYear);
+            });
+        }
+
+        function filterByYear(year) {
+            artworkSections.forEach(section => {
+                const sectionCards = Array.from(section.querySelectorAll('.art-card'));
+                let sectionHasVisible = false;
+
+                sectionCards.forEach(card => {
+                    const visible = card.dataset.year === year;
+                    card.style.display = visible ? '' : 'none';
+                    if (visible) sectionHasVisible = true;
+                });
+
+                section.style.display = sectionHasVisible ? '' : 'none';
+            });
+        }
+
+        function selectYear(year) {
+            setActiveYearButton(year);
+            filterByYear(year);
+        }
+
+        cards.forEach(card => {
+            card.dataset.year = '2025-2026';
+        });
+
+        yearButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                if (button.disabled) return;
+                selectYear(button.dataset.year);
+            });
+        });
+
+        function randomBetween(min, max) {
+            return min + Math.random() * (max - min);
+        }
+
+        function createEdgeTriangles() {
+            const leftContainer = document.querySelector('.edge-triangles.left');
+            const rightContainer = document.querySelector('.edge-triangles.right');
+            if (!leftContainer || !rightContainer) return;
+
+            const groups = [
+                { count: 46, bias: 4.2, minSize: 110, maxSize: 190, opacityMin: 0.26, opacityMax: 0.38 },
+                { count: 38, bias: 3.0, minSize: 70, maxSize: 130, opacityMin: 0.20, opacityMax: 0.30 },
+                { count: 28, bias: 1.8, minSize: 48, maxSize: 84, opacityMin: 0.14, opacityMax: 0.22 },
+                { count: 18, bias: 1.2, minSize: 32, maxSize: 58, opacityMin: 0.10, opacityMax: 0.18 },
+                { count: 14, bias: 0.8, minSize: 18, maxSize: 42, opacityMin: 0.06, opacityMax: 0.14 }
+            ];
+
+            const createTriangle = (container, side, group) => {
+                const edgeWidth = container.clientWidth || 340;
+                const depth = Math.pow(Math.random(), group.bias);
+                const inset = Math.max(12, depth * edgeWidth * 0.96);
+                const edgeIntensity = Math.max(0.18, 1 - depth * 0.65);
+                const size = randomBetween(group.minSize, group.maxSize) * edgeIntensity;
+                const triangle = document.createElement('div');
+                triangle.className = `triangle ${Math.random() > 0.52 ? 'dark' : 'light'} ${Math.random() > 0.78 ? 'soft' : ''}`;
+                triangle.style.width = `${size}px`;
+                triangle.style.height = `${size}px`;
+                triangle.style.setProperty('--triangle-size', `${size}px`);
+                triangle.style.setProperty('--triangle-rotation', `${randomBetween(0, 360)}deg`);
+                triangle.style.setProperty('--triangle-opacity', `${randomBetween(group.opacityMin, group.opacityMax).toFixed(3)}`);
+                triangle.style.top = `${randomBetween(-10, 102)}%`;
+
+                const horizontalOffset = Math.max(0, inset - (10 + size * 0.25));
+                if (side === 'left') {
+                    triangle.style.left = `${horizontalOffset}px`;
+                } else {
+                    triangle.style.right = `${horizontalOffset}px`;
+                }
+
+                if (depth < 0.32) {
+                    const currentOpacity = parseFloat(triangle.style.getPropertyValue('--triangle-opacity'));
+                    triangle.style.opacity = `${Math.min(1, currentOpacity + 0.10).toFixed(3)}`;
+                }
+
+                container.appendChild(triangle);
+            };
+
+            groups.forEach(group => {
+                for (let i = 0; i < group.count; i += 1) {
+                    createTriangle(leftContainer, 'left', group);
+                    createTriangle(rightContainer, 'right', group);
+                }
+            });
+        }
+
+        createEdgeTriangles();
+        selectYear('2025-2026');
+    })();
 </script>
 </body>
 </html>
